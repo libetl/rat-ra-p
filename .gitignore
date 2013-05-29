@@ -8,6 +8,8 @@
 war/gwt_bree/
 gwt-unitCache/
 
+.gwt/.gwt-log
+
 # boilerplate generated classes #
 .apt_generated/
 
