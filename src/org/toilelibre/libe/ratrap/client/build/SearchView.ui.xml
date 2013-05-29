@@ -1,0 +1,158 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui">
+    <ui:style>
+		/* Add CSS here. See the GWT docs on UI Binder for more details */
+		.important {
+			font-weight: bold;
+		}
+		
+table td {
+    text-align: left !important;
+}
+	
+    </ui:style>
+
+    <g:HTMLPanel>
+
+        <g:HorizontalSplitPanel
+            height="100%"
+            splitPosition="300px"
+            width="100%" styleName="searchHP" >
+
+            <g:TabPanel
+                height="100%"
+                width="100%" >
+
+                <g:Tab text="- de distance" >
+
+                    <g:VerticalPanel
+                        height="100%"
+                        width="100%" >
+
+                        <g:HorizontalPanel>
+
+                            <g:Label width="100px">
+Origine
+                            </g:Label>
+
+                            <g:SuggestBox ui:field="oriDist"/>
+                        </g:HorizontalPanel>
+
+                        <g:HorizontalPanel>
+
+                            <g:Label width="100px">
+Destination
+                            </g:Label>
+
+                            <g:SuggestBox ui:field="destDist" />
+                        </g:HorizontalPanel>
+
+                        <g:Button
+                            text="Rattraper"
+                            ui:field="ratrapDist" />
+                        <g:HTML ui:field="resultDist"/>
+                    </g:VerticalPanel>
+                </g:Tab>
+
+                <g:Tab text="- de corresp°" >
+
+                    <g:VerticalPanel
+                        height="100%"
+                        width="100%" >
+
+                        <g:HorizontalPanel>
+
+                            <g:Label width="100px">
+Origine
+                            </g:Label>
+
+                            <g:SuggestBox ui:field="oriCorresp" />
+                        </g:HorizontalPanel>
+
+                        <g:HorizontalPanel>
+
+                            <g:Label width="100px">
+Destination
+                            </g:Label>
+
+                            <g:SuggestBox ui:field="destCorresp" />
+                        </g:HorizontalPanel>
+
+                        <g:Button
+                            text="Rattraper"
+                            ui:field="ratrapCorresp" />
+                        <g:HTML ui:field="resultCorresp"/>
+                    </g:VerticalPanel>
+                </g:Tab>
+
+                <g:Tab text="- long" >
+
+                    <g:VerticalPanel
+                        height="100%"
+                        width="100%" >
+
+                        <g:HorizontalPanel>
+
+                            <g:Label width="100px">
+Origine
+                            </g:Label>
+
+                            <g:SuggestBox ui:field="oriLong" />
+                        </g:HorizontalPanel>
+
+                        <g:HorizontalPanel>
+
+                            <g:Label width="100px">
+Destination
+                            </g:Label>
+
+                            <g:SuggestBox ui:field="destLong" />
+                        </g:HorizontalPanel>
+
+                        <g:Button
+                            text="Rattraper"
+                            ui:field="ratrapLong" />
+                        <g:HTML ui:field="resultLong"/>
+                    </g:VerticalPanel>
+                </g:Tab>
+
+                <g:Tab text="- lent" >
+
+                    <g:VerticalPanel
+                        height="100%"
+                        width="100%" >
+
+                        <g:HorizontalPanel>
+
+                            <g:Label width="100px">
+Origine
+                            </g:Label>
+
+                            <g:SuggestBox ui:field="oriLent" />
+                        </g:HorizontalPanel>
+
+                        <g:HorizontalPanel>
+
+                            <g:Label width="100px">
+Destination
+                            </g:Label>
+
+                            <g:SuggestBox ui:field="destLent" />
+                        </g:HorizontalPanel>
+
+                        <g:Button
+                            text="Rattraper"
+                            ui:field="ratrapLent" />
+                        <g:HTML ui:field="resultLent"/>
+                    </g:VerticalPanel>
+                </g:Tab>
+            </g:TabPanel>
+
+			<g:ScrollPanel width="475px" height="600px" ui:field="mapContainer"
+			               alwaysShowScrollBars="false" styleName="hidden">
+            </g:ScrollPanel>
+        </g:HorizontalSplitPanel>
+    </g:HTMLPanel>
+
+</ui:UiBinder>
