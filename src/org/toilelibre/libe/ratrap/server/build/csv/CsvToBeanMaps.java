@@ -7,41 +7,39 @@ import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.persistence.EntityManager;
 import javax.persistence.Id;
 
 public class CsvToBeanMaps {
 	private Package packageName;
 	private String[] headers;
 	
-	private Map<Class<?>, Map<Object, Object>> data;
+	private Map<String, Object> data;
 
+	
 	public CsvToBeanMaps() {
 		this.packageName = this.getClass().getPackage();
-		this.data = new HashMap<Class<?>, Map<Object, Object>>();
+		this.data = new HashMap<String, Object>();
 	}
 
 	public CsvToBeanMaps(Package packageName1) {
 		this.packageName = packageName1;
-		this.data = new HashMap<Class<?>, Map<Object, Object>>();
+		this.data = new HashMap<String, Object>();
 	}
 
 	public void initHeaders(String firstLine) {
 		this.headers = firstLine.split(",");
 		for (int i = 0; i < this.headers.length; i++) {
-			this.headers[i] = this.camelcasify(this.headers[i]);
+			this.headers[i] = this.camelCasify(this.headers[i]);
 		}
 	}
 
-	private String camelcasify(String in) {
+	private String camelCasify(String in) {
 		StringBuilder sb = new StringBuilder();
 		boolean capitalizeNext = false;
 		for (char c : in.toCharArray()) {
@@ -79,20 +77,32 @@ public class CsvToBeanMaps {
 		String line = "";
 		while ((line = br.readLine()) != null) {
 			Object o = this.toBean(textFileName, line);
-			results.put(this.getPk (o), o);
+			String pk = this.getPk (o);
+			results.put(pk, o);
+			this.data.put(o.getClass().getSimpleName() + "#" + pk, o);
 		}
 		br.close();
 		return results;
 	}
 
-	private Object getPk(Object o) throws IllegalArgumentException, IllegalAccessException {
+	private String getPk(Object o) throws IllegalArgumentException, IllegalAccessException {
 		Class<?> c = o.getClass();
+		StringBuffer sb = new StringBuffer ();
 		for (Field f : c.getDeclaredFields()){
 			if (f.getAnnotation(Id.class) != null){
-				return f.get(o);
+				if (f.getType() != null &&
+						this.packageName.equals(f.getType().getPackage())){
+					return this.getPk(f.get(o));
+				}
+				if (sb.length() > 0){
+					sb.append("&");
+				}
+				sb.append(f.getName());
+				sb.append("=");
+				sb.append(f.get(o));
 			}
 		}
-		return null;
+		return sb.toString();
 	}
 	
 	public Object toBean(String textFileName, String line)
@@ -105,7 +115,7 @@ public class CsvToBeanMaps {
 		String objectName = textFileName.endsWith(".txt") ? textFileName
 				.substring(0, textFileName.lastIndexOf(".txt")) : textFileName;
 		Class<?> c = Class.forName(this.packageName.getName() + "."
-				+ objectName.substring(0, 1).toUpperCase() + this.camelcasify((objectName.substring(1))));
+				+ objectName.substring(0, 1).toUpperCase() + this.camelCasify((objectName.substring(1))));
 		result = c.newInstance();
 		Pattern p = Pattern.compile("([^\",]+|(\"([^\"]*)\"))(,)?");
 		Matcher m = p.matcher(line);
@@ -117,7 +127,18 @@ public class CsvToBeanMaps {
 			f.setAccessible(true);
 			this.setValue(f, result, value);
 		}
+		this.fillReferences (result);
+		this.fillRelatedRows (result);
 		return result;
+	}
+
+	private void fillReferences(Object result) {
+		
+	}
+
+	private void fillRelatedRows(Object result) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	private void setValue(Field f, Object result, String value)
