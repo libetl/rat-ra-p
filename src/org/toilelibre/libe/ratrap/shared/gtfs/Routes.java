@@ -17,7 +17,6 @@ public class Routes implements Serializable {
 	private Long routeId;
 
 	@ManyToOne
-	//@JoinColumn(name = "agencyId")
 	private Agency agency;
 
 	private int agencyId;

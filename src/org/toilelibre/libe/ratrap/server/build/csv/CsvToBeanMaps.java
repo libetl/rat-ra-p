@@ -3,6 +3,7 @@ package org.toilelibre.libe.ratrap.server.build.csv;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -14,6 +15,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 public class CsvToBeanMaps {
 	private Package packageName;
@@ -136,9 +139,30 @@ public class CsvToBeanMaps {
 		
 	}
 
-	private void fillRelatedRows(Object result) {
-		// TODO Auto-generated method stub
-		
+	private void fillRelatedRows(Object result) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
+		Class<?> c = result.getClass();
+		for (Field f : c.getDeclaredFields()){
+			Annotation amto = f.getAnnotation(ManyToOne.class);
+			Annotation aotm = f.getAnnotation(OneToMany.class);
+			if (f.get(result) == null){
+				if (amto != null){
+					Field f2 = null;
+					for (Field ftmp : f.getType().getDeclaredFields()){
+						if (f.getAnnotation(Id.class) != null){
+							f2 = ftmp;
+						}
+					}
+					String name = f2.getName();
+					String className = f.getType().getSimpleName();
+					Field f1 = c.getDeclaredField(name);
+					Object value = f1.get(result);
+					Object reference = this.data.get(className + "#" + name + "=" + value);
+					if (reference != null){
+						f.set(result, reference);
+					}
+				}
+			}
+		}
 	}
 
 	private void setValue(Field f, Object result, String value)
