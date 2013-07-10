@@ -1,5 +1,8 @@
 package org.toilelibre.libe.ratrap.server.search;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.toilelibre.libe.ratrap.shared.Connection;
 import org.toilelibre.libe.ratrap.shared.DataMap;
 import org.toilelibre.libe.ratrap.shared.DistanceCompute;
@@ -25,14 +28,14 @@ public class DistPathSearchImpl extends PathSearch {
 		Connection conn2 = new Connection(s2, null);
 		while ((sp1.getId() != sp2.getId())
 				&& ((conn1 != null) || (conn2 != null))) {
-			conn1 = this.findNextConnectionCloserTo(s1, s2);
+			conn1 = this.findNextConnectionCloserTo(s1, s2, path.getStationSteps ());
 			if (conn1 != null && sm1.getId() != conn1.getStation().getId()) {
 				path.insert(conn1.getStation(), conn1.getLine());
 				sp1 = conn1.getStation();
 			} else {
 				conn1 = null;
 			}
-			conn2 = this.findNextConnectionCloserTo(s2, s1);
+			conn2 = this.findNextConnectionCloserTo(s2, s1, path.getStationSteps ());
 			if (conn2 != null && s1.getId() != s2.getId()
 					&& sm2.getId() != conn2.getStation().getId()) {
 				path.append(conn2.getStation(), conn2.getLine());
@@ -49,14 +52,15 @@ public class DistPathSearchImpl extends PathSearch {
 		return path;
 	}
 
-	private Connection findNextConnectionCloserTo(Station from, Station to) {
+	private Connection findNextConnectionCloserTo(Station from, Station to, List<Station> alreadyVisited) {
 		Station nextStation = null;
 		Line nextLine = null;
 		double distance1 = 1;
 		for (final Line l : from.getConnections()) {
 			if (l.getPath().get(from.getId()) != null) {
 				for (final Station stmp : l.getPath().get(from.getId())) {
-					if (DistanceCompute.distance(stmp, to) < distance1) {
+					if (DistanceCompute.distance(stmp, to) < distance1
+						 && !alreadyVisited.contains (stmp)) {
 						nextLine = l;
 						distance1 = DistanceCompute.distance(stmp, to);
 						nextStation = stmp;
@@ -67,7 +71,8 @@ public class DistPathSearchImpl extends PathSearch {
 		for (final Line l : from.getConnections()) {
 			if (l.getReversePath().get(from.getId()) != null) {
 				for (final Station stmp : l.getReversePath().get(from.getId())) {
-					if (DistanceCompute.distance(stmp, to) < distance1) {
+					if (DistanceCompute.distance(stmp, to) < distance1
+						  && !alreadyVisited.contains (stmp)) {
 						nextLine = l;
 						distance1 = DistanceCompute.distance(stmp, to);
 						nextStation = stmp;
