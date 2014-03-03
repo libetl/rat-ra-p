@@ -93,11 +93,16 @@ public class Line implements Serializable {
 		this.type = type;
 	}
 
-	@Override
-	public String toString() {
+	public String prettyPrint() {
 		if (this.type != null) {
 			return this.type.prettyPrint(this.id);
 		}
-		return this.type.toString() + "(" + this.id.substring(1) + ")";
+		return this.toString();
 	}
+	
+
+	@Override
+	public String toString() {
+		return (this.type == null ? "(?)" : "(" + this.type.toString() + ")") + "(" + this.id + ")";
+	} 
 }

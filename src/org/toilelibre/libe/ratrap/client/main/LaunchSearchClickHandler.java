@@ -47,7 +47,7 @@ public class LaunchSearchClickHandler implements ClickHandler {
 					@Override
 					public void onSuccess(final Path result) {
 						LaunchSearchClickHandler.this.resultLabel
-								.setHTML(result.toString().replace("\n",
+								.setHTML(result.prettyPrint ().replace("\n",
 										"<br/>"));
 					}
 				});

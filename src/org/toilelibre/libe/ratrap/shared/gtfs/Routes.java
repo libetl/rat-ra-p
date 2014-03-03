@@ -9,7 +9,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-import org.datanucleus.api.jpa.annotations.Extension;
 
 @Entity
 public class Routes implements Serializable {

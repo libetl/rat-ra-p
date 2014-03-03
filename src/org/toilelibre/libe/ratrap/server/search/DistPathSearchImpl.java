@@ -1,7 +1,9 @@
 package org.toilelibre.libe.ratrap.server.search;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.toilelibre.libe.ratrap.shared.Connection;
 import org.toilelibre.libe.ratrap.shared.DataMap;
@@ -15,44 +17,42 @@ public class DistPathSearchImpl extends PathSearch {
 	@Override
 	public Path search(final DataMap map, final Station origin,
 			final Station dest) {
-		Station sp1 = origin;
-		Station sp2 = dest;
-		Station s1 = origin;
-		Station s2 = dest;
-		Station sm1 = new Station();
-		Station sm2 = new Station();
-		final Path path = new Path("dist");
-		path.setStart(origin);
-		path.setEnd(dest);
-		Connection conn1 = new Connection(s1, null);
-		Connection conn2 = new Connection(s2, null);
-		while ((sp1.getId() != sp2.getId())
-				&& ((conn1 != null) || (conn2 != null))) {
-			conn1 = this.findNextConnectionCloserTo(s1, s2, path.getStationSteps ());
-			if (conn1 != null && sm1.getId() != conn1.getStation().getId()) {
-				path.insert(conn1.getStation(), conn1.getLine());
-				sp1 = conn1.getStation();
-			} else {
-				conn1 = null;
-			}
-			conn2 = this.findNextConnectionCloserTo(s2, s1, path.getStationSteps ());
-			if (conn2 != null && s1.getId() != s2.getId()
-					&& sm2.getId() != conn2.getStation().getId()) {
-				path.append(conn2.getStation(), conn2.getLine());
-				sp2 = conn2.getStation();
-			} else {
-				conn2 = null;
-			}
-			sm1 = s1;
-			sm2 = s2;
-			s1 = sp1;
-			s2 = sp2;
+		Set<Station> seen = new HashSet<Station> ();
+		final Path path = new Path("dist", origin, dest);
+		while (true) {
+			this.getCloser (path.getS1 (), path.getS2 (), path.getSM1 (), path, seen, true);
+			if (this.isNearest (path.getS1 (), path.getS2 ())){break;}
+			/*this.getCloser (path.getS2 (), path.getS1 (), path.getSM2 (), path, seen, false);
+			if (this.isNearest (path.getS1 (), path.getS2 ())){break;}*/
 		}
 
 		return path;
 	}
 
-	private Connection findNextConnectionCloserTo(Station from, Station to, List<Station> alreadyVisited) {
+	private Connection getCloser (Station s1, Station s2, Station sm1, Path path,
+			Set<Station> seen, boolean insert) {
+		Connection conn1;
+		conn1 = this.findNextConnectionCloserTo(s1, s2, seen);
+		if (conn1 != null && sm1.getId() != conn1.getStation().getId()) {
+			if (insert){
+			    path.insert(conn1.getStation(), conn1.getLine());
+			}else{
+				path.append(conn1.getStation(), conn1.getLine());				
+			}
+			seen.add (conn1.getStation());
+		} else {
+			conn1 = this.revertPathUntilConnectionNotSeen (s1, s2, sm1, path, seen, insert);
+		}
+	    return conn1;
+    }
+
+	private Connection revertPathUntilConnectionNotSeen (Station s1, Station s2, Station sm1,
+            Path path, Set<Station> seen, boolean part1) {
+		path.pop (s1);
+		return path.getLastStep (part1);
+    }
+
+	private Connection findNextConnectionCloserTo(Station from, Station to, Set<Station> seen) {
 		Station nextStation = null;
 		Line nextLine = null;
 		double distance1 = 1;
@@ -60,7 +60,7 @@ public class DistPathSearchImpl extends PathSearch {
 			if (l.getPath().get(from.getId()) != null) {
 				for (final Station stmp : l.getPath().get(from.getId())) {
 					if (DistanceCompute.distance(stmp, to) < distance1
-						 && !alreadyVisited.contains (stmp)) {
+						 && !seen.contains (stmp)) {
 						nextLine = l;
 						distance1 = DistanceCompute.distance(stmp, to);
 						nextStation = stmp;
@@ -72,7 +72,7 @@ public class DistPathSearchImpl extends PathSearch {
 			if (l.getReversePath().get(from.getId()) != null) {
 				for (final Station stmp : l.getReversePath().get(from.getId())) {
 					if (DistanceCompute.distance(stmp, to) < distance1
-						  && !alreadyVisited.contains (stmp)) {
+						  && !seen.contains (stmp)) {
 						nextLine = l;
 						distance1 = DistanceCompute.distance(stmp, to);
 						nextStation = stmp;
@@ -85,5 +85,43 @@ public class DistPathSearchImpl extends PathSearch {
 		}
 		return new Connection(nextStation, nextLine);
 	}
+	
 
+
+	private boolean isNearest (Station s1, Station s2) {
+		if (s1 == s2){
+			return true;
+		}
+		List<Station> alreadySeen = new LinkedList<Station> ();
+		for (Line line : s1.getConnections ()){
+			Station test = this.findNextLineStation (line, s1, alreadySeen);
+			alreadySeen.add (test);
+			if (test == s2){
+				return true;
+			}
+		}
+	    return false;
+    }
+	
+	private Station findNextLineStation(final Line line, final Station s, List<Station> alreadySeen) {
+		double x = 90.0;
+		double y = 90.0;
+		Station result = null;
+		if (s == null) {
+			return null;
+		}
+		for (final Station current : line.getStations()) {
+			final double newX = current.getPosition().getLongitude()
+					- s.getPosition().getLongitude();
+			final double newY = current.getPosition().getLatitude()
+					- s.getPosition().getLatitude();
+			if ((current != s) && !alreadySeen.contains(current)
+					&& (((x * x) + (y * y)) > ((newX * newX) + (newY * newY)))) {
+				x = newX;
+				y = newY;
+				result = current;
+			}
+		}
+		return result;
+	}
 }

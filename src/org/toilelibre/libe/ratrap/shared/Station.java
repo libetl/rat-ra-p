@@ -26,6 +26,15 @@ public class Station implements Serializable, LocalizedPlace {
 		this.aliases = new HashSet<String>();
 	}
 
+	public void become (Station s){
+		this.aliases = s.aliases;
+		this.city = s.city;
+		this.connections = s.connections;
+		this.id = s.id;
+		this.name = s.name;
+		this.position = s.position;
+	}
+	
 	public City getCity() {
 		return this.city;
 	}
@@ -77,6 +86,14 @@ public class Station implements Serializable, LocalizedPlace {
 
 	@Override
 	public String toString() {
+		StringBuffer sb = new StringBuffer (this.name + " ");
+		for (Line l : this.connections){
+			sb.append (l + ", ");
+		}
+		return sb.toString ().substring (0, sb.length () - 2);
+	}
+	
+	public String prettyPrint() {
 		return this.name + ", " + this.city + " " + this.connections + " "
 				+ this.position;
 	}

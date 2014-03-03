@@ -25,4 +25,8 @@ public final class Connection implements Serializable {
 	public Line getLine() {
 		return this.line;
 	}
+	
+	public String toString (){
+		return (this.line != null ? this.line.getType ().toString () + this.line.getId () : "?") + "->" + (this.station != null ? this.station.getName () : "?");
+	}
 }
