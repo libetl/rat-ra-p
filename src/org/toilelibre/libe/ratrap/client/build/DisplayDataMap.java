@@ -4,9 +4,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.toilelibre.libe.ratrap.client.rsrc.ColorsGet;
+import org.toilelibre.libe.ratrap.client.store.ClientDataStore;
 import org.toilelibre.libe.ratrap.shared.City;
 import org.toilelibre.libe.ratrap.shared.DataMap;
 import org.toilelibre.libe.ratrap.shared.Line;
+import org.toilelibre.libe.ratrap.shared.Path;
+import org.toilelibre.libe.ratrap.shared.Position;
 import org.toilelibre.libe.ratrap.shared.Rectangle;
 import org.toilelibre.libe.ratrap.shared.Station;
 import org.toilelibre.libe.ratrap.shared.TransportType;
@@ -56,6 +59,9 @@ public class DisplayDataMap {
 		for (final Line line : result.getLines().values()) {
 			DisplayDataMap.drawALine(canvas, result, line, strokes);
 		}
+		if (result.getTrip() != null){
+			DisplayDataMap.displayPath (canvas, result.getTrip());
+		}
 	}
 
 	private static void drawALine(final Canvas canvas, final DataMap result,
@@ -102,12 +108,42 @@ public class DisplayDataMap {
 					+ ((Math.floor(y2 * 100) / 100) * heightScreen));
 		}
 		strokes.add(o);
+		DisplayDataMap.drawASegment(canvas, r, color, origin, destination, 2.0f);
+	}
+
+	public static void displayPath(final Canvas canvas, Path result) {
+		Station origin = result.getStart();
+		final Rectangle r = ClientDataStore.map.getBounds();
+		final String color = ColorsGet.getJourney();
+		for (Station destination : result.getStationSteps()){
+			DisplayDataMap.drawASegment (canvas, r, color, origin, destination, 4.0f);
+			origin = destination;
+		}
+		DisplayDataMap.drawASegment (canvas, r, color, origin, result.getEnd(), 4.0f);
+	}
+
+	private static void drawASegment(Canvas canvas, Rectangle r, String color,
+			Station origin, Station destination, float thickness) {
+		final double width = r.getLongMax() - r.getLongMin();
+		final double height = r.getLatMax() - r.getLatMin();
+		final int widthScreen = canvas.getCanvasElement().getWidth();
+		final int heightScreen = canvas.getCanvasElement().getHeight();
+		final double x1 = ((origin.getPosition().getLongitude() - r
+				.getLongMin()) / width) * widthScreen;
+		double y1 = heightScreen
+				- (((origin.getPosition().getLatitude() - r.getLatMin()) / height) * heightScreen);
+
+		final double x2 = ((destination.getPosition().getLongitude() - r
+				.getLongMin()) / width) * widthScreen;
+		double y2 = heightScreen
+				- (((destination.getPosition().getLatitude() - r.getLatMin()) / height) * heightScreen);
 		canvas.getContext2d().setStrokeStyle(CssColor.make(color));
-		canvas.getContext2d().setLineWidth(2.0);
+		canvas.getContext2d().setLineWidth(thickness);
 		canvas.getContext2d().beginPath();
 		canvas.getContext2d().moveTo(x1, y1);
 		canvas.getContext2d().lineTo(x2, y2);
 		canvas.getContext2d().stroke();
 		canvas.getContext2d().closePath();
+		
 	}
 }

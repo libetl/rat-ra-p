@@ -42,19 +42,23 @@ public class WindowRATraP {
 
 		searchView.getRatrapDist().addClickHandler(
 				new LaunchSearchClickHandler("dist", searchView.getOriDist(),
-						searchView.getDestDist(), searchView.getResultDist()));
+						searchView.getDestDist(), searchView.getResultDist(),
+						searchView.getCanvas()));
 
 		searchView.getRatrapCorresp().addClickHandler(
 				new LaunchSearchClickHandler("corresp", searchView
 						.getOriCorresp(), searchView.getDestCorresp(),
-						searchView.getResultCorresp()));
+						searchView.getResultCorresp(),
+						searchView.getCanvas()));
 
 		searchView.getRatrapLong().addClickHandler(
 				new LaunchSearchClickHandler("long", searchView.getOriLong(),
-						searchView.getDestLong(), searchView.getResultLong()));
+						searchView.getDestLong(), searchView.getResultLong(),
+						searchView.getCanvas()));
 
 		searchView.getRatrapLent().addClickHandler(
 				new LaunchSearchClickHandler("lent", searchView.getOriLent(),
-						searchView.getDestLent(), searchView.getResultLent()));
+						searchView.getDestLent(), searchView.getResultLent(),
+						searchView.getCanvas()));
 	}
 }

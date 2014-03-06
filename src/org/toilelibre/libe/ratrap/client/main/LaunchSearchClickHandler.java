@@ -2,9 +2,12 @@ package org.toilelibre.libe.ratrap.client.main;
 
 import org.toilelibre.libe.ratrap.client.SearchService;
 import org.toilelibre.libe.ratrap.client.SearchServiceAsync;
+import org.toilelibre.libe.ratrap.client.build.DisplayDataMap;
+import org.toilelibre.libe.ratrap.client.store.ClientDataStore;
 import org.toilelibre.libe.ratrap.shared.Constants;
 import org.toilelibre.libe.ratrap.shared.Path;
 
+import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -22,16 +25,18 @@ public class LaunchSearchClickHandler implements ClickHandler {
 			.create(SearchService.class);
 	private final HasText destination;
 	private final HasText origin;
+	private final Canvas canvas;
 
 	private final String type;
 	private final HTML resultLabel;
 
 	public LaunchSearchClickHandler(final String string, final HasText ori,
-			final HasText dest, HTML label) {
+			final HasText dest, HTML label, Canvas canvas) {
 		this.type = string;
 		this.origin = ori;
 		this.destination = dest;
 		this.resultLabel = label;
+		this.canvas = canvas;
 	}
 
 	@Override
@@ -49,7 +54,10 @@ public class LaunchSearchClickHandler implements ClickHandler {
 						LaunchSearchClickHandler.this.resultLabel
 								.setHTML(result.prettyPrint ().replace("\n",
 										"<br/>"));
+						ClientDataStore.map.setTrip(result);
+						DisplayDataMap.display(ClientDataStore.map, canvas);
 					}
+					
 				});
 	}
 

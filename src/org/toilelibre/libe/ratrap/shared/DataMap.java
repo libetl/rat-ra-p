@@ -18,6 +18,15 @@ public class DataMap implements Serializable {
 	private Map<String, Station> stationsByName;
 	private Map<String, Station> stationsByLettersName;
 	private Agency agency;
+	private Path trip;
+
+	public Path getTrip() {
+		return trip;
+	}
+
+	public void setTrip(Path trip) {
+		this.trip = trip;
+	}
 
 	public DataMap() {
 		super();

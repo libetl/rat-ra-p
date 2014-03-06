@@ -43,7 +43,7 @@ public class RATraP implements EntryPoint {
 					new AsyncCallback<DataMap>() {
 						@Override
 						public void onFailure(final Throwable caught) {
-							Window.alert(Constants.SERVER_ERROR);
+							Window.alert(Constants.SERVER_ERROR + "\n" + caught);
 						}
 
 						@Override
@@ -123,7 +123,7 @@ public class RATraP implements EntryPoint {
 				new AsyncCallback<DataMap>() {
 					@Override
 					public void onFailure(final Throwable caught) {
-						Window.alert(Constants.SERVER_ERROR);
+						Window.alert(Constants.SERVER_ERROR + "\n" + caught);
 					}
 
 					@Override

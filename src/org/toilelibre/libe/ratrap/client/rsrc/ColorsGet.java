@@ -58,6 +58,7 @@ public class ColorsGet {
 			this.put("RCt", "#eac823");
 			this.put("RDt", "#23b57d");
 			this.put("REt", "#d490bf");
+			this.put("journey", "#FFFFFF");
 		}
 	};
 
@@ -75,6 +76,10 @@ public class ColorsGet {
 			prefix = tp.name().substring(0, 1);
 		}
 		return ColorsGet.colors.get(prefix + name + "t");
+	}
+
+	public static String getJourney() {
+		return ColorsGet.colors.get("journey");
 	}
 
 }

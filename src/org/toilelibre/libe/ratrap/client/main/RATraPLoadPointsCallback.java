@@ -18,7 +18,7 @@ public class RATraPLoadPointsCallback implements RequestCallback {
 
 	@Override
 	public void onError(final Request request, final Throwable exception) {
-		Window.alert(Constants.SERVER_ERROR);
+		Window.alert(Constants.SERVER_ERROR + "\n" + exception);
 	}
 
 	@Override
