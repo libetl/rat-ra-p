@@ -36,6 +36,10 @@ public class BuildMapServiceImpl extends RemoteServiceServlet implements
 				builder.setDataMap(result);
 				builder.build(csvs.get(csvKey));
 			}
+			final Builder builder = new BuildCloseStationsImpl ();
+			builder.setDataMap(result);
+			builder.build(null);
+			
 			LastDataMapUpdate.setData(result);
 			LastDataMapUpdate.setLastUpdateTime(new Date());
 			return result;

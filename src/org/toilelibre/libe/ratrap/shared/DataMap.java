@@ -1,6 +1,7 @@
 package org.toilelibre.libe.ratrap.shared;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 import org.toilelibre.libe.ratrap.shared.gtfs.Agency;
@@ -17,6 +18,7 @@ public class DataMap implements Serializable {
 	private Map<Integer, Station> stations;
 	private Map<String, Station> stationsByName;
 	private Map<String, Station> stationsByLettersName;
+	private List<StationPair> stationPairs;
 	private Agency agency;
 	private Path trip;
 
@@ -97,6 +99,14 @@ public class DataMap implements Serializable {
 
 	public void setAgency(Agency agency) {
 		this.agency = agency;
+	}
+
+	public List<StationPair> getStationPairs() {
+		return stationPairs;
+	}
+
+	public void setStationPairs(List<StationPair> stationPairs) {
+		this.stationPairs = stationPairs;
 	}
 
 }

@@ -201,22 +201,77 @@ public class Path implements Serializable, Comparable<Path> {
 				+ " :\n");
 		Line l = null;
 		if (this.start != null) {
-			sb.append(" v d&eacute;part : " + this.start.getName() + "\n");
+			sb.append(" &darr; d&eacute;part : " + this.start.getName() + "\n");
 		}
 		for (int i = 0 ; i < this.stationSteps.size(); i++) {
 
 			if (l != this.lineSteps.get(i)) {
+				if (l != null){
+				  sb.append(" <span style=\"font-size:18px;font-weight:bold;background-color:"
+						+ ColorsGet.get(l.getType(), l.getId()) + ";color:" +
+						ColorsGet.get(l.getType(), l.getId())
+						+ "\">-</span> ");
+				  sb.append(" <span style=\"\">" + this.stationSteps.get(i).getName()
+						+ "</span>\n");
+				}
 				l = this.lineSteps.get(i);
 				sb.append(l.prettyPrint () + "<div style=\"height:30px\">&nbsp;</div>");
+				if (i == 0){
+					sb.append(" <span style=\"font-size:18px;font-weight:bold;background-color:"
+							+ ColorsGet.get(l.getType(), l.getId()) + ";color:" +
+							ColorsGet.get(l.getType(), l.getId())
+							+ "\">-</span> ");
+					sb.append(" <span style=\"\">" + this.start.getName()
+							+ "</span>\n");					
+				}
 			}
-			sb.append(" <span style=\"font-size:18px;font-weight:bold;color:"
-					+ ColorsGet.get(l.getType(), l.getId()) + "\">|</span> ");
+			sb.append(" <span style=\"font-size:18px;font-weight:bold;background-color:"
+					+ ColorsGet.get(l.getType(), l.getId()) + ";color:" +
+					ColorsGet.get(l.getType(), l.getId())
+					+ "\">-</span> ");
 			sb.append(" <span style=\"\">" + this.stationSteps.get(i).getName()
 					+ "</span>\n");
 		}
 		if (this.end != null) {
-			sb.append(" X arriv&eacute;e &agrave; " + this.end.getName() + "\n");
+			sb.append(" <span style=\"font-size:18px;font-weight:bold;background-color:"
+					+ ColorsGet.get(l.getType(), l.getId()) + ";color:" +
+					ColorsGet.get(l.getType(), l.getId())
+					+ "\">-</span> ");
+			sb.append(" <span style=\"\">" + this.end.getName()
+					+ "</span>\n");
+			sb.append(" &diams; arriv&eacute;e &agrave; " + this.end.getName() + "\n");
 		}
 		return sb.toString();
+	}
+
+	public void insert(Path path) {
+		for (int i = 0 ; i < path.getStationSteps().size() ; i++){
+			this.preinsert(i, path.getStationSteps().get(i), 
+					path.getLineSteps().get(i));
+		}
+	}
+
+	private void preinsert(int i, Station sp1, Line lp1) {
+		this.lineSteps.add(i, lp1);
+		this.stationSteps.add(i, sp1);
+		cut++;
+	}
+
+	private void postappend (int i, Station sp1, Line lp1) {
+		if (i < this.lineSteps.size()){
+			this.lineSteps.add(i, lp1);
+			this.stationSteps.add(i, sp1);			
+		}else{
+		  this.lineSteps.add(lp1);
+		  this.stationSteps.add(sp1);
+		}
+	}
+
+	public void append(Path path) {
+		int j = 0;
+		for (int i = path.getStationSteps().size() - 1 ; i >= 0; i--){
+			this.postappend(this.getStationSteps().size() - j++, path.getStationSteps().get(i), 
+					path.getLineSteps().get(i));
+		}
 	}
 }
