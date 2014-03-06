@@ -293,10 +293,10 @@ function ratrap(){
   if (!isHostedMode()) {
     try {
       unflattenKeylistIntoAnswers(['gecko1_8'], '0BA4189B093AC0E3E1173B0D9D7B8FAD');
-      unflattenKeylistIntoAnswers(['ie10'], '60E43A38D649C9DCB399B5C861F9D863');
-      unflattenKeylistIntoAnswers(['ie8'], '79BB67BD157F4AE82AEB58045698F714');
+      unflattenKeylistIntoAnswers(['safari'], '0DB9BE68A25616DE7519E0DA97561CA2');
       unflattenKeylistIntoAnswers(['ie9'], '8ACB8264E03A0C2381207C7AABA3619E');
-      unflattenKeylistIntoAnswers(['safari'], '9718E9FA30083A6710D3287F47D3134C');
+      unflattenKeylistIntoAnswers(['ie10'], 'F2044190EAABEA2F0864022F491C7D8B');
+      unflattenKeylistIntoAnswers(['ie8'], 'F3525DDFDBF6F64262F19BE8E33C4367');
       strongName = answers[computePropValue('user.agent')];
       var idx = strongName.indexOf(':');
       if (idx != -1) {
